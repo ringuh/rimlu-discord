@@ -1,0 +1,24 @@
+{
+  "name": "rimlu-discord",
+  "version": "1.0.0",
+  "description": "self use discord bot",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ringuh/rimlu-discord.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ringuh/rimlu-discord/issues"
+  },
+  "homepage": "https://github.com/ringuh/rimlu-discord#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "mongoose": "^5.6.11"
+  }
+}
