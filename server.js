@@ -6,12 +6,14 @@ global.appRoot = path.resolve(__dirname);
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync(appRoot + '/commands').filter(file => file.endsWith('.js'));
+
+const database = require('./funcs/database')
+database.connection()
 
 const loadCommands = (fPath) => {
             
-	const folders = require('fs').readdirSync(fPath, { withFileTypes: true }).filter(file => file.isDirectory());
-	const commandFiles = require('fs').readdirSync(fPath, { withFileTypes: true }).filter(file => file.name.endsWith('.js'));
+	const folders = fs.readdirSync(fPath, { withFileTypes: true }).filter(file => file.isDirectory());
+	const commandFiles = fs.readdirSync(fPath, { withFileTypes: true }).filter(file => file.name.endsWith('.js'));
 	
 	for (const file of commandFiles) {
 		const command = require(path.join(fPath, file.name));

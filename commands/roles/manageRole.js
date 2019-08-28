@@ -1,5 +1,7 @@
+const database = require('../../funcs/database')
+
 module.exports = {
-    name: ['manageRole', 'mr'],
+    name: ['managerole', 'mr'],
     description: 'Toggles role requests: !managerole pikku mulli #pikku-mullit bot',
     args: "<role> [channel] [adminrole]",
     execute(message, args) {
@@ -26,7 +28,7 @@ module.exports = {
         }
 
         roleA = message.guild.roles.find(role => role.name.toLowerCase() == roleA.join(" ").toLowerCase())
-     
+
 
         if (!roleA) {
             message.channel.send(`Role not found`, { code: true });
@@ -40,19 +42,41 @@ module.exports = {
         // "channel ja role tallessa. tallenna db"
 
         if (roleA) {
-            let str = `Saving role ${roleA.name}`
-            if(channel && adminRole)
-                str += ` moderated by ${adminRole.name} at channel ${channel}`
-            message.channel.send(str, { code: false });
+            let Role = require("../../models/role.model")
+
+            Role.findOne({ server: message.guild.id, id: roleA.id })
+                .then((role) => {
+                    if (!role)
+                        Role.create({
+                            server: message.guild.id,
+                            id: roleA.id,
+                            admin: adminRole ? adminRole.id : null,
+                            channel: channel ? channel.id : null
+                        }).then(role => {
+                            let str = `Enabling access to role ${roleA.name}`
+                            if (channel && adminRole)
+                                str += ` moderated by ${adminRole.name} at channel ${channel}`
+                            message.channel.send(str, { code: false });
+                        }).catch((err) => {
+                            console.log(err.message)
+                            throw err
+                        })
+                    else {
+                        role.remove().then(() =>
+                            message.channel.send(`Removing access to role ${roleA.name}.\nRun this command again if you wanted to edit the role access.`, { code: true })
+                        )
+                    }
+                })
+                .catch((err) => {
+                    console.log(err.message)
+                    throw err
+                })
+
+
+
+
             return true
         }
 
-
-        console.log(args)
-
-
-
-
-        
     },
 };

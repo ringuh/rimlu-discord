@@ -1,28 +1,23 @@
 const mongoose = require('mongoose');
 
-const Role = new mongoose.Schema({
+const Requestedrole = new mongoose.Schema({
     server: {
         type: String,
         required: true,
         trim: true
     },
-    id: {
+    user: {
         type: String,
-        unique: true,
         required: true,
         trim: true
     },
-    admin: {
+    role: {
         type: String,
         trim: true
-    },
-    channel: { 
-        type: String,
-        trim: true
-    },
+    }
 }, {
         timestamps: true,
     });
 
-module.exports = mongoose.model('Role', Role);
+module.exports = mongoose.model('Requestedrole', Requestedrole);
 

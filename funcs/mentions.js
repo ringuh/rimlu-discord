@@ -8,7 +8,7 @@ module.exports = {
             if (mention.startsWith('!')) {
                 mention = mention.slice(1);
             }
-            console.log(guild.members.get(mention))
+            
             return guild.members.get(mention)
         }
     },
