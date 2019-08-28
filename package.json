@@ -19,6 +19,8 @@
   "homepage": "https://github.com/ringuh/rimlu-discord#readme",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "mongoose": "^5.6.11"
+    "pg": "^7.12.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.17.0"
   }
 }

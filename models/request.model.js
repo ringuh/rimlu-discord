@@ -1,29 +1,26 @@
 module.exports = function(sequelize, type) {
-    const Role = sequelize.define('Role', {
+    const Request = sequelize.define('Request', {
         id: {
             type: type.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        role: {
-            type: type.STRING,
-            allowNull: false,
-            unique: true
-        },
         server: {
             type: type.STRING,
             allowNull: false,
         },
-        admin: {
+        user: {
             type: type.STRING,
+            allowNull: false
         },
-        channel: {
+        role: {
             type: type.STRING,
+            allowNull: false,
         }
+
     }, {
         timestamps: true,
     });
 
-    return Role;
+    return Request;
 }
-

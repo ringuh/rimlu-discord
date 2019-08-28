@@ -1,4 +1,4 @@
-const database = require('../../funcs/database')
+
 
 module.exports = {
     name: ['managerole', 'mr'],
@@ -14,7 +14,7 @@ module.exports = {
             return true
         }
         const { IsChannel } = require('../../funcs/mentions.js')
-        let roleA = []
+        let targetRole = []
         let adminRole = null
         let channel = null
         for (let j in args) {
@@ -24,57 +24,48 @@ module.exports = {
                 adminRole = message.guild.roles.find(role => role.name.toLowerCase() == args.slice(i).join(" ").toLowerCase())
                 break
             } else
-                roleA.push(args[j])
+                targetRole.push(args[j])
         }
 
-        roleA = message.guild.roles.find(role => role.name.toLowerCase() == roleA.join(" ").toLowerCase())
+        targetRole = message.guild.roles.find(role => role.name.toLowerCase() == targetRole.join(" ").toLowerCase())
 
 
-        if (!roleA) {
+        if (!targetRole) {
             message.channel.send(`Role not found`, { code: true });
             return true
         }
 
-        if (roleA.name.toLowerCase() !== args.join(" ").toLowerCase() && !(adminRole && channel)) {
+        if (targetRole.name.toLowerCase() !== args.join(" ").toLowerCase() && !(adminRole && channel)) {
             message.channel.send(`Invalid channel and admin role`, { code: true });
             return true
         }
-        // "channel ja role tallessa. tallenna db"
+ 
 
-        if (roleA) {
-            let Role = require("../../models/role.model")
+        if (targetRole) {
+            const { Role } = require("../../models")
 
-            Role.findOne({ server: message.guild.id, id: roleA.id })
-                .then((role) => {
-                    if (!role)
-                        Role.create({
-                            server: message.guild.id,
-                            id: roleA.id,
-                            admin: adminRole ? adminRole.id : null,
-                            channel: channel ? channel.id : null
-                        }).then(role => {
-                            let str = `Enabling access to role ${roleA.name}`
-                            if (channel && adminRole)
-                                str += ` moderated by ${adminRole.name} at channel ${channel}`
-                            message.channel.send(str, { code: false });
-                        }).catch((err) => {
-                            console.log(err.message)
-                            throw err
-                        })
-                    else {
-                        role.remove().then(() =>
-                            message.channel.send(`Removing access to role ${roleA.name}.\nRun this command again if you wanted to edit the role access.`, { code: true })
-                        )
-                    }
-                })
-                .catch((err) => {
-                    console.log(err.message)
-                    throw err
-                })
-
-
-
-
+            Role.findOrCreate({
+                where: { server: message.guild.id, role: targetRole.id },
+                defaults: {
+                    admin: adminRole ? adminRole.id : null,
+                    channel: channel ? channel.id : null
+                }
+            }).then(([role, created]) => {
+                if (created) {
+                    let str = `Enabling access to role ${targetRole.name}`
+                    if (channel && adminRole)
+                        str += ` moderated by ${adminRole.name} at channel ${channel}`
+                    message.channel.send(str, { code: false });
+                }
+                else{
+                    role.destroy().then(() => {
+                        message.channel.send(`Removing access to role ${targetRole.name}.\nRun this command again if you wanted to edit the role access.`, { code: true })
+                    })
+                }
+            }).catch((err) => {
+                console.log(err.message)
+                throw err
+            })
             return true
         }
 

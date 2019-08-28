@@ -11,7 +11,7 @@ module.exports = {
         jsontofile = require('../../funcs/jsontofile')
 
         let roleStr = args.join(" ")
-        const { IsUser } = require('../../funcs/mentions.js')
+        const { IsUser } = require('../../funcs/mentions')
         let member = message.member
         if (args.length > 1) {
             member = IsUser(args[0], message.guild)
@@ -35,36 +35,38 @@ module.exports = {
             return true
         }
 
-        let Requestedrole = require("../../models/requestedrole.model")
+        const { Request, Role } = require("../../models")
 
-        const existing = await Requestedrole.findOne({ server: message.guild.id, role: role.id, user: member.id })
+        const existing = await Request.findOne({
+            where: { server: message.guild.id, role: role.id, user: member.id }
+        })
 
         if (message.author.id == member.user.id && existing) {
             message.reply(`You have already requested role ${role.name} and are prevented from doing it again`);
             return true
         }
 
-        if(member.roles.get(role.id)){
+        if (member.roles.get(role.id)) {
             message.channel.send(`${member} already has role ${role.name}`, { code: false });
             return true
         }
 
-        Requestedrole.create({
+        await Request.create({
             server: message.guild.id,
             user: member.id,
             role: role.id
         });
 
-        let Role = require("../../models/role.model")
-        Role.findOne({ server: message.guild.id, id: role.id })
-            .then(rooli => {
-                if (!rooli) {
+
+        Role.findOne({ where: { server: message.guild.id, role: role.id } })
+            .then(roleReq => {
+                if (!roleReq) {
                     message.channel.send(`Role ${role.name} is not available`, { code: true });
                     return true
                 }
 
 
-                if (!rooli.admin) {
+                if (!roleReq.admin) {
                     member.addRole(role.id).then(() => {
                         message.channel.send(`Added role ${role.name} to ${member}`, { code: false });
                     }).catch(err => message.channel.send(err, { code: true }))
@@ -82,7 +84,7 @@ module.exports = {
                         .setFooter(`expires`);
 
 
-                    channel = message.guild.channels.get(rooli.channel)
+                    channel = message.guild.channels.get(roleReq.channel)
                     channel.send(emb).then(async function (msg) {
                         await msg.react("🆗")
                         await msg.react("🚷")
@@ -92,17 +94,19 @@ module.exports = {
                             const member = msg.guild.members.find(mb => mb.id == user.id)
                             return ['🆗', '🚷'].includes(reaction.emoji.name) && (
                                 member.hasPermission("ADMINISTRATOR") ||
-                                member.roles.get(rooli.admin)
-                            ) 
+                                member.roles.get(roleReq.admin)
+                            )
                         };
 
-                        msg.awaitReactions(filter, { max: 1, time: 24*60*60000, errors: ['time'] })
+                        msg.awaitReactions(filter, { max: 1, time: 24 * 60 * 60000, errors: ['time'] })
                             .then(collected => {
                                 const reaction = collected.first();
- 
+
                                 if (reaction.emoji.name === '🆗') {
                                     member.addRole(role.id)
                                     msg.channel.send(`${member} promoted to ${role.name} by ${reaction.users.last()}`)
+                                    msg.delete()
+                                    message.delete()
 
                                 } else if (reaction.emoji.name === '🚷') {
                                     msg.channel.send(`${member} request declined by ${reaction.users.last()}`)

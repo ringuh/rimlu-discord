@@ -9,7 +9,7 @@ module.exports = {
         }
 
         let roleStr = args.join(" ")
-        const { IsUser } = require('../../funcs/mentions.js')
+        const { IsUser } = require('../../funcs/mentions')
         let member = message.member
         if (args.length > 1) {
             member = IsUser(args[0], message.guild)
@@ -23,31 +23,36 @@ module.exports = {
 
         const role = message.guild.roles.find(role => role.name.toLowerCase() == roleStr.toLowerCase())
         if (!role || !member.roles.get(role.id)) {
-            message.channel.send(`Role ${roleStr} not found`, { code: true });
+            message.channel.send(`Role ${roleStr} not found ${role ? `on ${member.user.username}`: ''}`, { code: true });
             return true
         }
 
-        
-        Role = require('../../models/role.model')
-        Role.findOne({ server: message.guild.id, id: role.id })
-            .then(rooli => {
-                const adminaccess = message.member.roles.get(rooli.admin) || message.member.hasPermission("ADMINISTRATOR")
 
-                if (!adminaccess && member.id != message.author.id) {
+        const { Role, Request } = require('../../models')
+        Role.findOne({ where: { server: message.guild.id, role: role.id } })
+            .then(deleteRole => {
+                const adminaccess = deleteRole ? message.member.roles.get(deleteRole.admin) : false
+                
+                if (!(adminaccess || !message.member.hasPermission("ADMINISTRATOR")) && member.id != message.author.id) {
                     message.channel.send(`You don't have permission to do whatever you were doing`, { code: true });
                     return true
                 }
 
-                if (role) {
-                    member.removeRole(role.id).then(() =>
-                        message.channel.send(`Removing role ${role.name} from ${member}`, { code: false }))
+               
+                member.removeRole(role.id).then(() =>
+                    message.channel.send(`Removing role ${role.name} from ${member}`, { code: false }))
 
-                        let Requestedrole = require("../../models/requestedrole.model")
-                        if(member.id == message.author.id)
-                            Requestedrole.findOneAndDelete({ server: message.guild.id, role: role.id, user: member.user.id }).then(()=> console.log("deleting"))
+                // if you remove your role by yourself allow re-applying
+                if (member.id == message.author.id)
+                    Request.destroy({
+                        where:
+                        {
+                            server: message.guild.id,
+                            role: role.id,
+                            user: member.user.id
+                        }
+                    })
 
-                } else
-                    message.channel.send(`Role ${args[0]} not found`, { code: true });
             })
     },
 };

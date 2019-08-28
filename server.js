@@ -7,8 +7,9 @@ global.appRoot = path.resolve(__dirname);
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
-const database = require('./funcs/database')
-database.connection()
+//const database = require('./funcs/database')
+//database.connection()
+const db = require('./models')
 
 const loadCommands = (fPath) => {
             
