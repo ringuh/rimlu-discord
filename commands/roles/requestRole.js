@@ -1,5 +1,5 @@
 module.exports = {
-    name: ['requestrole', 'rr'],
+    name: ['requestrole'],
     description: 'Requests a role to user: !requestrole pikku mulli',
     args: "[user] <role>",
     async execute(message, args) {
@@ -32,6 +32,11 @@ module.exports = {
         let role = message.guild.roles.find(role => role.name.toLowerCase() == roleStr.toLowerCase())
         if (!role) {
             message.channel.send(`Role ${args[0]} not found`, { code: true });
+            return true
+        }
+
+        if (targetRole.hasPermission("ADMINISTRATOR")) {
+            message.channel.send(`Managing admin roles forbidden`, { code: true });
             return true
         }
 

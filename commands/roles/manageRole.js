@@ -1,7 +1,7 @@
 
 
 module.exports = {
-    name: ['managerole', 'mr'],
+    name: ['managerole'],
     description: 'Toggles role requests: !managerole pikku mulli #pikku-mullit bot',
     args: "<role> [channel] [adminrole]",
     execute(message, args) {
@@ -35,11 +35,16 @@ module.exports = {
             return true
         }
 
+        if (targetRole.hasPermission("ADMINISTRATOR")) {
+            message.channel.send(`Managing admin roles forbidden`, { code: true });
+            return true
+        }
+
         if (targetRole.name.toLowerCase() !== args.join(" ").toLowerCase() && !(adminRole && channel)) {
             message.channel.send(`Invalid channel and admin role`, { code: true });
             return true
         }
- 
+
 
         if (targetRole) {
             const { Role } = require("../../models")
@@ -57,7 +62,7 @@ module.exports = {
                         str += ` moderated by ${adminRole.name} at channel ${channel}`
                     message.channel.send(str, { code: false });
                 }
-                else{
+                else {
                     role.destroy().then(() => {
                         message.channel.send(`Removing access to role ${targetRole.name}.\nRun this command again if you wanted to edit the role access.`, { code: true })
                     })
