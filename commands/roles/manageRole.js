@@ -2,7 +2,7 @@
 
 module.exports = {
     name: ['managerole'],
-    description: 'Toggles role requests: !managerole pikku mulli #pikku-mullit bot',
+    description: 'Toggles role requests',
     args: "<role> [channel] [adminrole]",
     execute(message, args) {
         if (!message.member.hasPermission("ADMINISTRATOR")) {

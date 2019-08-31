@@ -10,6 +10,9 @@ client.commands = new Discord.Collection();
 //const database = require('./funcs/database')
 //database.connection()
 const db = require('./models')
+const streams = require('./funcs/streams')
+
+
 
 const loadCommands = (fPath) => {
             
@@ -33,6 +36,7 @@ loadCommands(path.join(appRoot, "commands"))
 
 client.once('ready', () => {
 	console.log('Discord bot running!');
+	streams.init(client)
 });
 
 client.on('message', message => {

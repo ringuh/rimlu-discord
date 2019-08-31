@@ -12,14 +12,13 @@ module.exports = {
             
             for (const file of commandFiles) {
                 const command = require(path.join(fPath, file.name));
-                reply.push(`${command.name.join(" / ")} ${command.args || ''}-- ${command.description}`)
+                reply.push(`${command.name.join(" / ")} ${command.args+' ' || ''}-- ${command.description}`)
             }
 
             folders.forEach(folder => {
                 reply.push("", folder.name, "-------")
                 dirs(require('path').join(fPath, folder.name))
-            })
-            
+            })            
             
         };
 

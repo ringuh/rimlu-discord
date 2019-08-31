@@ -1,6 +1,6 @@
 module.exports = {
     name: ['removerole'],
-    description: 'Removes role from user: !removerole @pienirexuli#1337 pikku mulli',
+    description: 'Removes role from user',
     args: "[user] <role>",
     execute(message, args) {
         if (args.length < 1) {

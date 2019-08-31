@@ -1,6 +1,6 @@
 module.exports = {
     name: ['requestrole'],
-    description: 'Requests a role to user: !requestrole pikku mulli',
+    description: 'Requests a role to user',
     args: "[user] <role>",
     async execute(message, args) {
         if (args.length < 1) {
