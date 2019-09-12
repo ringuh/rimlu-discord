@@ -36,11 +36,12 @@ loadCommands(path.join(appRoot, "commands"))
 
 client.once('ready', () => {
 	console.log('Discord bot running!');
+	client.user.setActivity("!commands", {type: "LISTENING"});
 	streams.init(client)
 });
 
 client.on('message', message => {
-	if (!message.content.startsWith(prefix) || message.author.bot) return;
+	if (!message.content.startsWith(prefix) || (message.author.bot && message.author.id !== "621467973122654238")) return;
 
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const command = args.shift().toLowerCase();

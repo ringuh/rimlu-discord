@@ -35,7 +35,7 @@ module.exports = {
             return true
         }
 
-        if (targetRole.hasPermission("ADMINISTRATOR")) {
+        if (role.hasPermission("ADMINISTRATOR")) {
             message.channel.send(`Managing admin roles forbidden`, { code: true });
             return true
         }

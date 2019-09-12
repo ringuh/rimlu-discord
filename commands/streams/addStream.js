@@ -1,7 +1,7 @@
 
 
 module.exports = {
-    name: ['addstream', 'as'],
+    name: ['addstream'],
     description: 'Adds stream',
     args: "<platform> [channel] <stream1 ... streamN>",
     async execute(message, args) {
