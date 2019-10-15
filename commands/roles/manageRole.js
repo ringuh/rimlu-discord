@@ -57,14 +57,14 @@ module.exports = {
                 }
             }).then(([role, created]) => {
                 if (created) {
-                    let str = `Enabling access to role ${targetRole.name}`
+                    let str = `Enabling access to role '${targetRole.name}'`
                     if (channel && adminRole)
-                        str += ` moderated by ${adminRole.name} at channel ${channel}`
+                        str += ` moderated by '${adminRole.name}' at channel ${channel}`
                     message.channel.send(str, { code: false });
                 }
                 else {
                     role.destroy().then(() => {
-                        message.channel.send(`Removing access to role ${targetRole.name}.\nRun this command again if you wanted to edit the role access.`, { code: true })
+                        message.channel.send(`Removing access to role '${targetRole.name}'.\nRun this command again if you wanted to edit the role access.`, { code: true })
                     })
                 }
             }).catch((err) => {

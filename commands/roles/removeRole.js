@@ -23,7 +23,7 @@ module.exports = {
 
         const role = message.guild.roles.find(role => role.name.toLowerCase() == roleStr.toLowerCase())
         if (!role || !member.roles.get(role.id)) {
-            message.channel.send(`Role ${roleStr} not found ${role ? `on ${member.user.username}` : ''}`, { code: true });
+            message.channel.send(`Role '${roleStr}' not found ${role ? `on ${member.user.username}` : ''}`, { code: true });
             return true
         }
 
@@ -32,20 +32,19 @@ module.exports = {
             return true
         }
 
-
         const { Role, Request } = require('../../models')
         Role.findOne({ where: { server: message.guild.id, role: role.id } })
             .then(deleteRole => {
-                const adminaccess = deleteRole ? message.member.roles.get(deleteRole.admin) : false
+                const roleAdmin = deleteRole ? message.member.roles.get(deleteRole.admin) : false
 
-                if (!(adminaccess || !message.member.hasPermission("ADMINISTRATOR")) && member.id != message.author.id) {
+                if (member.id != message.author.id && !roleAdmin && !message.member.hasPermission("ADMINISTRATOR")) {
                     message.channel.send(`You don't have permission to do whatever you were doing`, { code: true });
                     return true
                 }
 
 
                 member.removeRole(role.id).then(() =>
-                    message.channel.send(`Removing role ${role.name} from ${member}`, { code: false }))
+                    message.channel.send(`Removing role '${role.name}' from ${member}`, { code: false }))
 
                 // if you remove your role by yourself allow re-applying
                 if (member.id == message.author.id)

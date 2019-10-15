@@ -87,36 +87,6 @@ module.exports = {
         }
 
 
-        /* if(role)
-        {
-            let str = [`Role ${role.name}`, '']
-            
-            if(role.hasPermission("ADMINISTRATOR"))
-                return message.channel.send(`${role.name} is admin and all powerful`, { code: true })
-
-            
-            guild.channels.map(c => {
-                return {
-                    name: c.name,
-                    view: c.permissionsFor(role).has("VIEW_CHANNEL", false),
-                    send: c.permissionsFor(role).has("SEND_MESSAGES", false),
-                }
-            }).sort((a, b) => (a.calculatedPosition > b.calculatedPosition) ? 1 : -1)
-            .map(c => {
-                
-                let s = c.name;
-                if(c.view) s = `${s} ${c.send? '' : '(read-only)'}`
-                else s = `${c} (BANNED)`
-
-                str.push(s)
-                return true
-            })
-            
-
-            return message.channel.send(str.join("\n"), { code: true })
-        } */
-
-
         if (channel) {
             let str = [`Channel #${channel.name}`, '']
 

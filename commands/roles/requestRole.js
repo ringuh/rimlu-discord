@@ -28,15 +28,14 @@ module.exports = {
             return true
         }
 
-
         let role = message.guild.roles.find(role => role.name.toLowerCase() == roleStr.toLowerCase())
         if (!role) {
-            message.channel.send(`Role ${args[0]} not found`, { code: true });
+            message.channel.send(`Role '${args[0]}' not found`, { code: true });
             return true
         }
 
         if (role.hasPermission("ADMINISTRATOR")) {
-            message.channel.send(`Managing admin roles forbidden`, { code: true });
+            message.channel.send(`Managing admin roles is forbidden`, { code: true });
             return true
         }
 
@@ -47,12 +46,12 @@ module.exports = {
         })
 
         if (message.author.id == member.user.id && existing) {
-            message.reply(`You have already requested role ${role.name} and are prevented from doing it again`);
+            message.reply(`You have already requested role '${role.name}' and are prevented from doing it again`);
             return true
         }
 
         if (member.roles.get(role.id)) {
-            message.channel.send(`${member} already has role ${role.name}`, { code: false });
+            message.channel.send(`${member} already has role '${role.name}'`, { code: false });
             return true
         }
 
@@ -66,14 +65,14 @@ module.exports = {
         Role.findOne({ where: { server: message.guild.id, role: role.id } })
             .then(roleReq => {
                 if (!roleReq) {
-                    message.channel.send(`Role ${role.name} is not available`, { code: true });
+                    message.channel.send(`Role '${role.name}' is not available`, { code: true });
                     return true
                 }
 
 
                 if (!roleReq.admin) {
                     member.addRole(role.id).then(() => {
-                        message.channel.send(`Added role ${role.name} to ${member}`, { code: false });
+                        message.channel.send(`Added role '${role.name}' to ${member}`, { code: false });
                     }).catch(err => message.channel.send(err, { code: true }))
 
                 }
@@ -88,7 +87,7 @@ module.exports = {
                         .setTimestamp()
                         .setFooter(`expires`);
 
-
+                    message.reply(`request for role '${role.name}' sent. Wait for admins approval`, { code: false });
                     channel = message.guild.channels.get(roleReq.channel)
                     channel.send(emb).then(async function (msg) {
                         await msg.react("🆗")
@@ -109,19 +108,20 @@ module.exports = {
 
                                 if (reaction.emoji.name === '🆗') {
                                     member.addRole(role.id)
-                                    msg.channel.send(`${member} promoted to ${role.name} by ${reaction.users.last()}`)
+                                    msg.channel.send(`${member} promoted to '${role.name}' by ${reaction.users.last()}`)
                                     msg.delete()
-                                    message.delete()
+                                    //message.delete()
 
                                 } else if (reaction.emoji.name === '🚷') {
                                     msg.channel.send(`${member} request declined by ${reaction.users.last()}`)
+                                    message.reply(`request for role '${role.name}' declined`, { code: false });
                                     msg.delete()
-                                    message.delete()
+                                    //message.delete()
                                 }
                             })
                             .catch(collected => {
                                 msg.delete()
-                                message.delete()
+                                //message.delete()
                             });
 
 
