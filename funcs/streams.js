@@ -5,6 +5,7 @@ const config = require('../config')
 const axios = require('axios')
 const Discord = require('discord.js');
 const parseMilliseconds = require('parse-ms');
+const loopDuration = 200*1000;
 module.exports = {
 
     init: (discord) => {
@@ -26,8 +27,14 @@ module.exports = {
                 (liveTime.hours > 0 ? `${liveTime.hours}h ` : '') +
                 `${liveTime.minutes}m`
 
-
-
+            const rndInt = (min, max) => {
+                return Math.floor(Math.random() * (max - min + 1) ) + min;
+            }
+            let width = rndInt(800, 1400)
+            let thumbnail =  twitch.thumbnail_url.replace("{width}", width).replace("{height}", Math.floor(width/(16/9)))
+            thumbnail = `${thumbnail}?time=${Date.now()}`
+            //console.log(thumbnail)
+           
             const message = embeds.find(em => em.id === stream.id)
             let emb = new Discord.RichEmbed()
 
@@ -35,7 +42,7 @@ module.exports = {
                 .setTitle(twitch.title)
                 .setURL(`https://www.twitch.tv/${twitch.user_name}`)
                 .setAuthor(twitch.user_name, twitch.user.profile_image_url, `https://www.twitch.tv/${twitch.user_name}`)
-                .setImage(twitch.thumbnail_url.replace("{width}", "1280").replace("{height}", "720"))
+                .setImage(thumbnail)
                 .setDescription(`Viewers: ${twitch.viewer_count}`)
                 .setTimestamp()
                 .setFooter(`Streamed for ${liveStr}`);
@@ -99,7 +106,7 @@ module.exports = {
                 })
 
 
-        }, 130000);
+        }, loopDuration);
 
     },
 }
