@@ -1,11 +1,11 @@
 const { Stream } = require('../models')
 const { IsChannel } = require('../funcs/mentions')
 const setting = require('../commands/setting')
-const config = require('../config')
+const { twitch_client, numerics } = global.config;
 const axios = require('axios')
 const Discord = require('discord.js');
 const parseMilliseconds = require('parse-ms');
-const loopDuration = 200*1000;
+
 module.exports = {
 
     init: (discord) => {
@@ -64,7 +64,7 @@ module.exports = {
         setInterval(() => {
             const helix = axios.create({
                 baseURL: 'https://api.twitch.tv/helix/',
-                headers: { 'Client-ID': config.twitch_client }
+                headers: { 'Client-ID': twitch_client }
             });
 
             Stream.findAll({ where: { platform: "twitch" } })
@@ -106,7 +106,7 @@ module.exports = {
                 })
 
 
-        }, loopDuration);
+        }, numerics.twitch_seconds);
 
     },
 }
