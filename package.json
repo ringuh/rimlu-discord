@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/ringuh/rimlu-discord#readme",
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "discord.js": "^11.5.1",
     "parse-ms": "^2.1.0",
     "pg": "^7.12.1",
